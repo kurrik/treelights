@@ -27,10 +27,18 @@ for j in range(1, 50):
 
 strip.off()
 
-for i in range(0, LED_COUNT):
-  strip.set(i, Color(rgb=(0, 1.0, 0)))
-  strip.update()
-  time.sleep(0.01)
-  strip.setOff(i)
+colors = [
+  Colors.blue,
+  Colors.green,
+  Colors.red,
+]
+
+for j in range (0, 10):
+  c = colors[j % len(colors)]
+  for i in range(0, LED_COUNT):
+    strip.set(i, c)
+    strip.update()
+    time.sleep(0.01)
+    strip.setOff(i)
 
 strip.off()

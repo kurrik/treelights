@@ -15,19 +15,32 @@ diagram:
 ![Wiring diagram](docs/raspberry_pi_diagram.png)
 
 ## Running
-Test the strand with some patterns.
+Test the strand with some patterns:
 ```
-python test_lights.py
+make test
 ```
 
-Run server (needs to be set up as a production web app):
+Run server on port 5000:
 ```
-sudo FLASK_APP=server flask run --host=0.0.0.0 --port=80
+make server
+```
+
+Install service to system:
+```
+sudo make install
+```
+
+Then:
+```
+sudo systemctl start treelights.service
+sudo systemctl stop treelights.service
+sudo systemctl enable treelights.service
 ```
 
 ## References
 - https://github.com/adammhaile/RPi-LPD8806/
 - http://learn.adafruit.com/light-painting-with-raspberry-pi
+- https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04
 
 ## Ribbon cable wiring
 

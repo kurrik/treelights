@@ -1,0 +1,11 @@
+[Unit]
+Description=treelights
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 -u main.py
+WorkingDirectory=%SERVER_DIRECTORY%
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=kurrik

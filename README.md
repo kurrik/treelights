@@ -15,8 +15,14 @@ diagram:
 ![Wiring diagram](docs/raspberry_pi_diagram.png)
 
 ## Running
+Test the strand with some patterns.
 ```
 python test_lights.py
+```
+
+Run server (needs to be set up as a production web app):
+```
+sudo FLASK_APP=server flask run --host=0.0.0.0 --port=80
 ```
 
 ## References

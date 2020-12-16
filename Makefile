@@ -1,4 +1,4 @@
-.PHONY: test server install
+.PHONY: test install restart start stop requirements develop
 .EXPORT_ALL_VARIABLES:
 
 SERVER_DIRECTORY = $(shell pwd)
@@ -9,8 +9,8 @@ HOSTNAME = $(shell hostname)
 test:
 	python test_lights.py
 
-server:
-	FLASK_APP=server flask run --host=0.0.0.0 --port=5000
+develop: stop
+	FLASK_APP=server FLASK_ENV=development flask run --host=0.0.0.0 --port=5000
 
 requirements:
 	pip3 install -r requirements.txt
@@ -34,3 +34,9 @@ install:
 # Restart the systemd service.
 restart:
 	systemctl restart treelights.service
+
+start:
+	systemctl start treelights.service
+
+stop:
+	systemctl stop treelights.service

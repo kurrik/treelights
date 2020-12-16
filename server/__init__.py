@@ -95,8 +95,12 @@ shared_state = SharedState()
 light_thread = LightThread(shared_state)
 light_thread.start()
 atexit.register(on_exit_signal, signum=signal.SIGUSR1, frame=None)
-signal.signal(signal.SIGINT, on_exit_signal)
-signal.signal(signal.SIGTERM, on_exit_signal)
+if __name__ == '__main__':
+  logging.info('Running in main thread. Registering signal handlers.')
+  signal.signal(signal.SIGINT, on_exit_signal)
+  signal.signal(signal.SIGTERM, on_exit_signal)
+else:
+  logging.info('Not running in main thread! Not registering signal handlers.')
 
 def create_app(test_config=None):
   # create and configure the app

@@ -27,7 +27,7 @@ make test
 
 Run server on port 5000:
 ```
-make server
+make develop
 ```
 
 Install service to system:

@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Environment=FLASK_CONFIG=production
-ExecStart=${GUNICORN_PATH} --bind unix:${SOCKET} -m 007 --workers=1 wsgi:app
+ExecStart=${GUNICORN_PATH} --bind unix:${SOCKET} -m 007 --workers=1 --log-level=debug --graceful-timeout=2 wsgi:app
 WorkingDirectory=${SERVER_DIRECTORY}
 StandardOutput=inherit
 StandardError=inherit

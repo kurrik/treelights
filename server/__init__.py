@@ -7,6 +7,8 @@ import atexit
 import os
 from treelights.ledstrip import LEDStrip, Colors
 from collections import defaultdict
+import signal
+import logging
 
 LED_COUNT = 100
 
@@ -33,7 +35,6 @@ class LightThread(threading.Thread):
     self.__shared_state = shared_state
     self.__strip = LEDStrip(LED_COUNT)
     self.__strip.off()
-
     self.__handlers = defaultdict(
       lambda: self.off,
       {
@@ -67,25 +68,35 @@ class LightThread(threading.Thread):
       self.__strip.fillOff()
 
   def run(self):
-    print("Starting LightThread.")
+    logging.info("Starting LightThread.")
     self.process_data()
-    print("Stopping LightThread.")
+    logging.info("Stopping LightThread.")
 
   def process_data(self):
     while not self.__shared_state.shouldExit():
       handler = self.__handlers[self.__shared_state.getMode()]
       handler()
 
+def on_exit_signal(signum, frame):
+  if not shared_state.shouldExit():
+    logging.info("Got signal {}, stopping light thread...".format(signum))
+    stop_light_thread()
+  else:
+    logging.info("Got signal {} but program was already exiting.".format(signum))
+
 def stop_light_thread():
-  print("App shutting down, sending exit signal to LightThread...")
+  logging.info("App shutting down, sending exit signal to LightThread...")
   shared_state.exit()
   light_thread.join()
-  print("LightThread shut down...")
+  logging.info("LightThread shut down...")
 
+logging.basicConfig(level=logging.DEBUG, format='%(relativeCreated)6d %(threadName)s %(message)s')
 shared_state = SharedState()
 light_thread = LightThread(shared_state)
 light_thread.start()
-atexit.register(stop_light_thread)
+atexit.register(on_exit_signal, signum=signal.SIGUSR1, frame=None)
+signal.signal(signal.SIGINT, on_exit_signal)
+signal.signal(signal.SIGTERM, on_exit_signal)
 
 def create_app(test_config=None):
   # create and configure the app

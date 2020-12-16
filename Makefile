@@ -15,7 +15,9 @@ server:
 requirements:
 	pip3 install -r requirements.txt
 
-# Needs sudo, e.g. `sudo make install`
+# Commands below need sudo, e.g. `sudo make install`
+
+# Install all the systemd and nginx files.
 install:
 	envsubst \
 		< treelights.nginx \
@@ -29,3 +31,6 @@ install:
 	sudo systemctl restart treelights.service
 	sudo systemctl restart nginx
 
+# Restart the systemd service.
+restart:
+	systemctl restart treelights.service

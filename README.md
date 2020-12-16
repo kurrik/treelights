@@ -8,6 +8,11 @@ pip3 install -r requirements.txt
 
 Written for Python 3.7.
 
+Install to run on port 80 through nginx:
+```
+sudo make install
+```
+
 Expects an [Adafruit LPD8806 LED
 strip](https://learn.adafruit.com/digital-led-strip) wired according to this
 diagram:

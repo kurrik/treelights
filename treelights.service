@@ -9,7 +9,7 @@ WorkingDirectory=${SERVER_DIRECTORY}
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
-User=kurrik
+User=${SUDO_USER}
 Group=www-data
 
 [Install]

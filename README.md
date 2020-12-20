@@ -43,6 +43,11 @@ sudo systemctl stop treelights.service
 sudo systemctl enable treelights.service
 ```
 
+Follow service logs:
+```
+journalctl -fu treelights.service
+```
+
 ## References
 - https://github.com/adammhaile/RPi-LPD8806/
 - http://learn.adafruit.com/light-painting-with-raspberry-pi

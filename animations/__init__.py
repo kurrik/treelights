@@ -3,6 +3,28 @@ import numpy
 import time
 from treelights.ledstrip import Colors
 
+def christmas_colors(strip):
+  skip = 10  # Number of blank LEDs between colors.
+  colors = [
+    Colors.red,
+    Colors.green,
+    Colors.white,
+  ]
+  t = 0
+  while True:
+    j = 0
+    colorIndex = 0
+    strip.fillOff()
+    while j < strip.ledCount:
+      color = colors[colorIndex % len(colors)]
+      ledIndex = (j + t) % strip.ledCount
+      strip.set(ledIndex, color)
+      colorIndex = colorIndex + 1
+      j = j + skip
+    strip.update()
+    t = t + 1
+    yield 0.05
+
 def off(strip):
   strip.off()
   while True:
@@ -24,7 +46,7 @@ def rainbow(strip):
       strip.set(i, colors[(i + j) % len(colors)])
     strip.update()
     j = j + 1
-    yield 0.03
+    yield 0.05
 
 def sparkle(strip):
   speed = 0.5 # Lower is slower.
@@ -56,28 +78,21 @@ def zoom_colors(strip):
     for i in range(0, strip.ledCount):
       strip.set(i, c)
       strip.update()
-      yield 0.005
+      yield 0.03
       strip.setOff(i)
     j = j + 1
 
-def zoom_multi(strip):
-  skip = 10
-  colors = [
-    Colors.red,
-    Colors.green,
-    Colors.white,
-  ]
-  t = 0
-  while True:
-    j = 0
-    colorIndex = 0
-    strip.fillOff()
-    while j < strip.ledCount:
-      color = colors[colorIndex % len(colors)]
-      ledIndex = (j + t) % strip.ledCount
-      strip.set(ledIndex, color)
-      colorIndex = colorIndex + 1
-      j = j + skip
-    strip.update()
-    t = t + 1
-    yield 0.03
+class Animation(object):
+  def __init__(self, name, handler, description="", is_off=False):
+    self.name = name
+    self.handler = handler
+    self.description = description
+    self.is_off = is_off
+
+animations_list = {
+  'rainbow': Animation('Rainbow', rainbow),
+  'sparkle': Animation('Sparkle', sparkle),
+  'christmas_colors': Animation('Christmas colors', christmas_colors),
+  'zoom_colors': Animation('Zoomy colors', zoom_colors),
+  'off': Animation('Off', off, is_off=True, description='Turn the lights off.'),
+}

@@ -5,6 +5,7 @@ from treelights.ledstrip import LEDStrip, Colors
 from colour import Color
 import animations
 import itertools
+import inspect
 
 def run_animation(strip, animation, cycles=100, delay=0.03):
   strip.off()

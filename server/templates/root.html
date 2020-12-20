@@ -23,18 +23,14 @@
               </tr>
             </thead>
             <tbody>
+              {% for key, a in animations.items() %}
               <tr>
                 <th scope="row">
-                  <a class="btn btn-primary" href="/zoom_multi">Zoom multi</a><br>
+                  <a class="btn {% if key == mode %}btn-success{% elif a.is_off %}btn-danger{% else %}btn-primary{% endif %}" href="/animate/{{key}}">{{a.name}}</a>
                 </th>
-                <td>Christmas Lights</td>
+                <td>{{a.description}}<td>
               </tr>
-              <tr>
-                <th scope="row">
-                  <a class="btn btn-secondary" href="/off">Off</a><br>
-                </th>
-                <td>Turn off</td>
-              </tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>

@@ -38,11 +38,7 @@ class LightThread(threading.Thread):
     self.__strip.off()
     self.__handlers = defaultdict(
       lambda: animations.off,
-      {
-        'zoom_multi': animations.zoom_multi,
-        'off': animations.off,
-      }
-    )
+      animations.animations_list)
 
   def run(self):
     logging.info("Starting LightThread.")
@@ -55,8 +51,9 @@ class LightThread(threading.Thread):
     while not self.__shared_state.shouldExit():
       new_mode = self.__shared_state.getMode()
       if new_mode != current_mode:
-        current_handler = self.__handlers[new_mode](self.__strip)
+        current_handler = self.__handlers[new_mode].handler(self.__strip)
         current_mode = new_mode
+        self.__strip.off()
       try:
         delay = next(current_handler)
       except StopIteration:
@@ -108,16 +105,13 @@ def create_app(test_config=None):
   # a simple page that says hello
   @app.route('/')
   def root():
-    return render_template('root.html')
+    return render_template('root.html',
+      mode=shared_state.getMode(),
+      animations=animations.animations_list)
 
-  @app.route('/zoom_multi')
-  def zoom_multi():
-    shared_state.setMode('zoom_multi')
-    return redirect(url_for('root'))
-
-  @app.route('/off')
-  def off():
-    shared_state.setMode('off')
+  @app.route('/animate/<animation>')
+  def animate(animation):
+    shared_state.setMode(animation)
     return redirect(url_for('root'))
 
   return app

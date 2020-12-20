@@ -45,7 +45,9 @@ class LightThread(threading.Thread):
 
   def off(self):
     self.__strip.off()
-    time.sleep(1)
+    while True:
+      time.sleep(1)
+      yield
 
   def zoom_multi(self):
     skip = 10
@@ -65,6 +67,7 @@ class LightThread(threading.Thread):
         j = j + skip
       self.__strip.update()
       time.sleep(0.03)
+      yield
       self.__strip.fillOff()
 
   def run(self):
@@ -73,9 +76,14 @@ class LightThread(threading.Thread):
     logging.info("Stopping LightThread.")
 
   def process_data(self):
+    current_mode = "None"
+    current_handler = self.off()
     while not self.__shared_state.shouldExit():
-      handler = self.__handlers[self.__shared_state.getMode()]
-      handler()
+      new_mode = self.__shared_state.getMode()
+      if new_mode != current_mode:
+        current_handler = self.__handlers[new_mode]()
+        current_mode = new_mode
+      next(current_handler)
 
 def on_exit_signal(signum, frame):
   if not shared_state.shouldExit():

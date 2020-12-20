@@ -37,7 +37,7 @@ class LightThread(threading.Thread):
     self.__strip = LEDStrip(LED_COUNT)
     self.__strip.off()
     self.__handlers = defaultdict(
-      lambda: self.off,
+      lambda: animations.off,
       {
         'zoom_multi': animations.zoom_multi,
         'off': animations.off,
@@ -51,14 +51,17 @@ class LightThread(threading.Thread):
 
   def process_data(self):
     current_mode = "None"
-    current_handler = self.__handlers['off'](self.__strip)
+    current_handler = animations.off(self.__strip)
     while not self.__shared_state.shouldExit():
       new_mode = self.__shared_state.getMode()
       if new_mode != current_mode:
         current_handler = self.__handlers[new_mode](self.__strip)
         current_mode = new_mode
-      next(current_handler)
-      time.sleep(0.03)
+      try:
+        delay = next(current_handler)
+      except StopIteration:
+        current_handler = animations.off(self.__strip)
+      time.sleep(delay or 0.03)
 
 def on_exit_signal(signum, frame):
   if not shared_state.shouldExit():

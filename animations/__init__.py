@@ -1,6 +1,46 @@
 from treelights.ledstrip import Colors
 import time
 
+def off(strip):
+  strip.off()
+  while True:
+    yield
+
+def rainbow(strip):
+  colors = [
+    Colors.red,
+    Colors.orange,
+    Colors.yellow,
+    Colors.green,
+    Colors.blue,
+    Colors.indigo,
+    Colors.violet,
+  ]
+  j = 0
+  while True:
+    for i in range(0, strip.ledCount):
+      strip.set(i, colors[(i + j) % len(colors)])
+    strip.update()
+    j = j + 1
+    yield 0.03
+
+def zoom_colors(strip):
+  colors = [
+    Colors.red,
+    Colors.yellow,
+    Colors.green,
+    Colors.blue,
+  ]
+  j = 0
+  while True:
+    c = colors[j % len(colors)]
+    for i in range(0, strip.ledCount):
+      strip.set(i, c)
+      strip.update()
+      yield 0.005
+      strip.setOff(i)
+    j = j + 1
+
 def zoom_multi(strip):
   skip = 10
   colors = [
@@ -21,9 +61,4 @@ def zoom_multi(strip):
       j = j + skip
     strip.update()
     t = t + 1
-    yield
-
-def off(strip):
-  strip.off()
-  while True:
-    yield
+    yield 0.03

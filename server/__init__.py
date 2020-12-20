@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, appcontext_tearing_down, render_template, redirect, url_for
+from flask import Flask, appcontext_tearing_down, render_template, redirect, url_for, send_from_directory
 import threading
 import time
 import atexit
@@ -115,7 +115,11 @@ def create_app(test_config=None):
 
   @app.route('/manifest.webmanifest')
   def manifest():
-    return app.send_static_file('manifest.webmanifest')
+    return send_from_directory(
+      app.static_folder,
+      'manifest.webmanifest',
+      mimetype='application/manifest+json;charset=UTF-8',
+      as_attachment=False)
 
   @app.route('/animate/<animation>')
   def animate(animation):

@@ -109,6 +109,14 @@ def create_app(test_config=None):
       mode=shared_state.getMode(),
       animations=animations.animations_list)
 
+  @app.route('/favicon.ico')
+  def favicon():
+    return app.send_static_file('icon-32.png')
+
+  @app.route('/manifest.webmanifest')
+  def manifest():
+    return app.send_static_file('manifest.webmanifest')
+
   @app.route('/animate/<animation>')
   def animate(animation):
     shared_state.setMode(animation)

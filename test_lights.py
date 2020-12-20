@@ -6,31 +6,18 @@ from colour import Color
 import animations
 import itertools
 
-def zoom_colors(strip):
-  colors = [
-    Colors.red,
-    Colors.yellow,
-    Colors.green,
-    Colors.blue,
-  ]
-  for j in range (0, 10):
-    c = colors[j % len(colors)]
-    for i in range(0, strip.ledCount):
-      strip.set(i, c)
-      strip.update()
-      time.sleep(0.005)
-      strip.setOff(i)
+def run_animation(strip, animation, cycles=100, delay=0.03):
+  strip.off()
+  for d in itertools.islice(animation(strip), cycles):
+    time.sleep(d or delay)
 
 if __name__ == '__main__':
   LED_COUNT = 100
   strip = LEDStrip(LED_COUNT)
-  strip.off()
-  for delay in itertools.islice(animations.zoom_multi(strip), 100):
-    time.sleep(delay or 0.03)
-  strip.off()
-  for delay in itertools.islice(animations.rainbow(strip), 100):
-    time.sleep(delay or 0.03)
-  strip.off()
-  for delay in itertools.islice(animations.zoom_colors(strip), 400):
-    time.sleep(delay or 0.03)
-  strip.off()
+  try:
+    run_animation(strip, animations.sparkle, cycles=1000)
+    run_animation(strip, animations.rainbow)
+    run_animation(strip, animations.zoom_colors, cycles=400)
+    run_animation(strip, animations.zoom_multi)
+  finally:
+    strip.off()

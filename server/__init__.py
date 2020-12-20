@@ -9,6 +9,7 @@ from treelights.ledstrip import LEDStrip, Colors
 from collections import defaultdict
 import signal
 import logging
+import animations
 
 LED_COUNT = 100
 
@@ -38,37 +39,10 @@ class LightThread(threading.Thread):
     self.__handlers = defaultdict(
       lambda: self.off,
       {
-        'zoom_multi': self.zoom_multi,
-        'off': self.off,
+        'zoom_multi': animations.zoom_multi,
+        'off': animations.off,
       }
     )
-
-  def off(self):
-    self.__strip.off()
-    while True:
-      time.sleep(1)
-      yield
-
-  def zoom_multi(self):
-    skip = 10
-    colors = [
-      Colors.red,
-      Colors.green,
-      Colors.white,
-    ]
-    for t in range(0, self.__strip.ledCount):
-      j = 0
-      colorIndex = 0
-      while j < self.__strip.ledCount:
-        color = colors[colorIndex % len(colors)]
-        ledIndex = (j + t) % self.__strip.ledCount
-        self.__strip.set(ledIndex, color)
-        colorIndex = colorIndex + 1
-        j = j + skip
-      self.__strip.update()
-      time.sleep(0.03)
-      yield
-      self.__strip.fillOff()
 
   def run(self):
     logging.info("Starting LightThread.")
@@ -77,13 +51,14 @@ class LightThread(threading.Thread):
 
   def process_data(self):
     current_mode = "None"
-    current_handler = self.off()
+    current_handler = self.__handlers['off'](self.__strip)
     while not self.__shared_state.shouldExit():
       new_mode = self.__shared_state.getMode()
       if new_mode != current_mode:
-        current_handler = self.__handlers[new_mode]()
+        current_handler = self.__handlers[new_mode](self.__strip)
         current_mode = new_mode
       next(current_handler)
+      time.sleep(0.03)
 
 def on_exit_signal(signum, frame):
   if not shared_state.shouldExit():

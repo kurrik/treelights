@@ -116,6 +116,10 @@ def create_app(test_config=None):
   def favicon():
     return app.send_static_file('icon-32.png')
 
+  @app.route('/apple-touch-icon.png')
+  def apple_touch_icon():
+    return app.send_static_file('icon-180.png')
+
   @app.route('/manifest.webmanifest')
   def manifest():
     return send_from_directory(

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-from flask import Flask, appcontext_tearing_down, render_template, redirect, url_for, send_from_directory
+from flask import Flask, appcontext_tearing_down, render_template, redirect, url_for, send_from_directory, make_response
 import threading
 import time
 import atexit
 import os
+import os.path
 from treelights.ledstrip import LEDStrip, Colors
 from collections import defaultdict
 import signal
@@ -105,9 +106,11 @@ def create_app(test_config=None):
   # a simple page that says hello
   @app.route('/')
   def root():
-    return render_template('root.html',
+    response = make_response(render_template('root.html',
       mode=shared_state.getMode(),
-      animations=animations.animations_list)
+      animations=animations.animations_list))
+    response.headers['Service-Worker-Allowed'] = '/'
+    return response
 
   @app.route('/favicon.ico')
   def favicon():
@@ -120,6 +123,16 @@ def create_app(test_config=None):
       'manifest.webmanifest',
       mimetype='application/manifest+json;charset=UTF-8',
       as_attachment=False)
+
+  @app.route('/serviceworker.js')
+  def serviceworker():
+    response = make_response(send_from_directory(
+      os.path.join(app.static_folder, 'js'),
+      'serviceworker.js',
+      mimetype='application/javascript;charset=UTF-8',
+      as_attachment=False))
+    response.headers['Service-Worker-Allowed'] = '/'
+    return response
 
   @app.route('/animate/<animation>')
   def animate(animation):

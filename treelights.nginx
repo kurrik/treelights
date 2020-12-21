@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name ${HOSTNAME};
+    server_name ${HOSTNAME} ${EXTRA_NGINX_SERVER_NAME};
 
     location / {
         include proxy_params;

@@ -6,6 +6,9 @@ GUNICORN_PATH = $(shell which gunicorn)
 SOCKET = $(shell pwd)/treelights.sock
 HOSTNAME = $(shell hostname)
 
+arne:
+	echo ${FOO}
+
 test:
 	python test_lights.py
 
@@ -16,7 +19,7 @@ requirements:
 	pip3 install -r requirements.txt
 
 # Commands below need sudo, e.g. `sudo make install`
-
+# Can use `sudo EXTRA_NGINX_SERVER_NAME=boudica.home.stepharne.com make install` to add extra domain names.
 # Install all the systemd and nginx files.
 install:
 	envsubst \
